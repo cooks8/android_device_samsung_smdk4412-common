@@ -1,3 +1,4 @@
+
 #
 # Copyright (C) 2012 The CyanogenMod Project
 #
@@ -111,7 +112,7 @@ BOARD_USE_CSC_FIMC := false
 EXTENDED_FONT_FOOTPRINT := true
 
 # Logging
-TARGET_USES_LOGD := false
+TARGET_USES_LOGD := true
 
 BOARD_USES_LEGACY_MMAP := true
 
