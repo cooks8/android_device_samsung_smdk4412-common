@@ -30,16 +30,15 @@ TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_CPU_VARIANT := cortex-a9
 ARCH_ARM_HAVE_NEON := true
 ARCH_ARM_HAVE_TLS_REGISTER := true
-TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
-TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
 
 EXYNOS4X12_ENHANCEMENTS := true
 EXYNOS4_ENHANCEMENTS := true
 
 ifdef EXYNOS4X12_ENHANCEMENTS
-TARGET_GLOBAL_CFLAGS += -DEXYNOS4_ENHANCEMENTS
-TARGET_GLOBAL_CFLAGS += -DEXYNOS4X12_ENHANCEMENTS
-TARGET_GLOBAL_CFLAGS += -DDISABLE_HW_ID_MATCH_CHECK
+
+BOARD_GLOBAL_CFLAGS += -DDISABLE_HW_ID_MATCH_CHECK
+BOARD_GLOBAL_CFLAGS += -DEXYNOS4_ENHANCEMENTS
+BOARD_GLOBAL_CFLAGS += -DEXYNOS4X12_ENHANCEMENTS
 endif
 
 BOARD_VENDOR := samsung
@@ -57,6 +56,8 @@ TARGET_PROVIDES_INIT_TARGET_RC := true
 BOARD_KERNEL_CMDLINE := console=ttySAC2,115200
 BOARD_KERNEL_BASE := 0x40000000
 BOARD_KERNEL_PAGESIZE := 2048
+KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_OS)-x86/arm/arm-eabi-4.8/bin
+TARGET_KERNEL_CROSS_COMPILE_PREFIX := arm-eabi-
 
 # Filesystem
 BOARD_NAND_PAGE_SIZE := 4096
@@ -72,12 +73,13 @@ TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_HARDWARE_CLASS := hardware/samsung/cmhw
 
 # Graphics
-BOARD_EGL_CFG := device/samsung/smdk4412-common/configs/egl.cfg
 BOARD_EGL_NEEDS_HANDLE_VALUE := true
 USE_OPENGL_RENDERER := true
 BOARD_USES_SKIAHWJPEG := true
-TARGET_GLOBAL_CFLAGS += -DSEC_HWJPEG_G2D -DFORCE_SCREENSHOT_CPU_PATH -DWORKAROUND_BUG_10194508 -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
-TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
+# Only needed by Samsung skia changes (not ported beyond 4.4)
+#BOARD_GLOBAL_CFLAGS += -DSEC_HWJPEG_G2D
+BOARD_GLOBAL_CFLAGS += -DFORCE_SCREENSHOT_CPU_PATH
 
 # FIMG Acceleration
 BOARD_USES_FIMGAPI := true
@@ -92,9 +94,6 @@ BOARD_USE_SYSFS_VSYNC_NOTIFICATION := true
 
 # Camera
 BOARD_CAMERA_HAVE_ISO := true
-TARGET_GLOBAL_CFLAGS += -DHAVE_ISO
-TARGET_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_HARDWARE
-TARGET_GLOBAL_CFLAGS += -DSAMSUNG_DVFS
 BOARD_USES_PROPRIETARY_LIBFIMC := true
 BOARD_CAMERA_MSG_MGMT := true
 
@@ -128,6 +127,8 @@ BOARD_HOSTAPD_DRIVER             := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB        := lib_driver_cmd_bcmdhd
 WIFI_DRIVER_MODULE_PATH          := "/system/lib/modules/dhd.ko"
 WIFI_DRIVER_FW_PATH_PARAM        := "/sys/module/dhd/parameters/firmware_path"
+WIFI_DRIVER_NVRAM_PATH_PARAM     := "/sys/module/dhd/parameters/nvram_path"
+WIFI_DRIVER_NVRAM_PATH           := "/system/etc/wifi/nvram_net.txt"
 WIFI_DRIVER_FW_PATH_STA          := "/system/etc/wifi/bcmdhd_sta.bin"
 WIFI_DRIVER_FW_PATH_AP           := "/system/etc/wifi/bcmdhd_apsta.bin"
 WIFI_DRIVER_FW_PATH_P2P          := "/system/etc/wifi/bcmdhd_p2p.bin"
@@ -141,7 +142,7 @@ BOARD_HAVE_SAMSUNG_WIFI          := true
 BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_BCM := true
 BOARD_HAVE_SAMSUNG_BLUETOOTH := true
-BOARD_BLUEDROID_VENDOR_CONF := device/samsung/smdk4412-common/bluetooth/vnd_smdk4x12.txt
+BOARD_CUSTOM_BT_CONFIG := device/samsung/smdk4412-common/bluetooth/vnd_smdk4x12.txt
 
 # Vold
 TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/s3c-usbgadget/gadget/lun%d/file"
